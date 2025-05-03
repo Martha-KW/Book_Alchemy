@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from data_models import db, Author, Book
 import os
@@ -19,10 +19,24 @@ print("SQLite-Pfad:", os.path.join(basedir, 'data', 'library.sqlite'))
 def home():
     return "Welcome to the Home Page!"
 
-with app.app_context():
-  db.create_all()
 
-print("working directory: os.getcwd())")
+@app.route('/add_author', methods=['GET', 'POST'])
+def add_author():
+    message = ""
+    if request.method == 'POST':
+        name = request.form['name']
+        new_author = Author(name=name)
+        db.session.add(new_author)
+        db.session.commit()
+        message = f"Author '{name}' successfully added to database!"
+    return render_template('add_author.html', message=message)
+
+
+# creates the tables, only one time needed
+# with app.app_context():
+#   db.create_all()
+
+print("working directory:", os.getcwd())
 # If you want to run the app
 if __name__ == '__main__':
     app.run(debug=True)
