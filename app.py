@@ -1,7 +1,9 @@
+from data_models import db, Author, Book
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from data_models import db, Author, Book
 import os
+
 
 
 # Create an instance of the Flask application
@@ -25,11 +27,28 @@ def add_author():
     message = ""
     if request.method == 'POST':
         name = request.form['name']
-        new_author = Author(name=name)
-        db.session.add(new_author)
-        db.session.commit()
-        message = f"Author '{name}' successfully added to database!"
+        birth_date_str = request.form.get('birth_date')
+        date_of_death_str = request.form.get('date_of_death')
+
+        # convert the date strings to  datetime.date
+        birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d').date() if birth_date_str else None
+        date_of_death = datetime.strptime(date_of_death_str, '%Y-%m-%d').date() if date_of_death_str else None
+
+        new_author = Author(
+            name=name,
+            birth_date=birth_date,
+            date_of_death=date_of_death
+        )
+        try:
+            db.session.add(new_author)
+            db.session.commit()
+            message = f"Author '{name}' successfully added to database!"
+        except Exception as e:
+            db.session.rollback()
+            message = f"Error adding author: {str(e)}"
+
     return render_template('add_author.html', message=message)
+
 
 
 # creates the tables, only one time needed
