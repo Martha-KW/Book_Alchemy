@@ -1,6 +1,6 @@
 from data_models import db, Author, Book
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_, func
 import os
@@ -9,6 +9,8 @@ import os
 
 # Create an instance of the Flask application
 app = Flask(__name__)
+app.secret_key = 'Frodo'
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data', 'library.sqlite')
@@ -109,6 +111,23 @@ def add_book():
 
     return render_template('add_book.html', authors=authors, message=message)
 
+
+@app.route('/book/<int:book_id>/delete', methods=['POST'])
+def delete_book(book_id):
+    book = Book.query.get_or_404(book_id)
+    author = Author.query.get(book.author_id)
+
+    db.session.delete(book)
+    db.session.commit()
+
+    # check if author has other books
+    other_books = Book.query.filter_by(author_id=author.id).count()
+    if other_books == 0:
+        db.session.delete(author)
+        db.session.commit()
+
+    flash(f'„{book.title}“ successfully deleted.', 'success')
+    return redirect(url_for('home'))
 
 
 # creates the tables, first time use only, reactivate if needed
