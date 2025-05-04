@@ -50,10 +50,38 @@ def add_author():
     return render_template('add_author.html', message=message)
 
 
+@app.route('/add_book', methods=['GET', 'POST'])
+def add_book():
+    message = ""
+    authors = Author.query.all()
 
-# creates the tables, only one time needed
+    if request.method == 'POST':
+        title = request.form.get('title')
+        isbn = request.form.get('isbn')
+        publication_year = request.form.get('publication_year')
+        author_id = request.form.get('author_id')
+
+        try:
+            new_book = Book(
+                title=title,
+                isbn=isbn,
+                publication_year=int(publication_year) if publication_year else None,
+                author_id=int(author_id)
+            )
+            db.session.add(new_book)
+            db.session.commit()
+            message = f"Book '{title}' successfully added!"
+        except Exception as e:
+            db.session.rollback()
+            message = f"Error adding book: {e}"
+
+    return render_template('add_book.html', authors=authors, message=message)
+
+
+
+# creates the tables, first time use only, reactivate if needed
 # with app.app_context():
-#   db.create_all()
+#     db.create_all()
 
 print("working directory:", os.getcwd())
 # If you want to run the app
