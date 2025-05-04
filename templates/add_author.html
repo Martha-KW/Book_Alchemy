@@ -1,27 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Author</title>
+  <style>
+    body {
+      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      color: #333;
+      padding: 2rem;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    form {
+      background-color: #e0e0e0;
+      padding: 1.5rem;
+      border-radius: 10px;
+      max-width: 500px;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="date"] {
+      width: 100%;
+      padding: 0.4rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+    }
+
+    input[type="submit"],
+    .button-link {
+      margin-top: 1.5rem;
+      background-color: #444;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-block;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="submit"]:hover,
+    .button-link:hover {
+      background-color: #222;
+    }
+
+    .message {
+      color: green;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
   <h2>Add a New Author</h2>
 
   <form action="/add_author" method="POST">
-  <label for="name">Author Name:</label>
-  <input type="text" id="name" name="name" required><br><br>
+    <label for="name">Author Name:</label>
+    <input type="text" id="name" name="name" required>
 
-  <label for="birth_date">Birthdate:</label>
-  <input type="date" id="birth_date" name="birth_date" required><br><br>
-  <label for="date_of_death">Date of Death:</label>
-  <input type="date" id="date_of_death" name="date_of_death"><br><br>
-  <input type="submit" value="Add Author">
+    <label for="birth_date">Birthdate:</label>
+    <input type="date" id="birth_date" name="birth_date" required>
+
+    <label for="date_of_death">Date of Death:</label>
+    <input type="date" id="date_of_death" name="date_of_death">
+
+    <input type="submit" value="Add Author">
   </form>
 
-{% if message %}
-  <p style="color: green;">{{ message }}</p>
-{% endif %}
+  <a href="{{ url_for('home') }}" class="button-link">⬅ Homepage</a>
 
-  </body>
+  {% if message %}
+    <p class="message">{{ message }}</p>
+  {% endif %}
+
+<footer style="text-align: center; margin-top: 3rem; padding: 1rem 0; font-size: 0.9rem; color: #888;">
+  &copy; 2025 – My Personal Library<br>
+  Cover images provided by <a href="https://openlibrary.org" target="_blank" style="color: #666; text-decoration: none;">OpenLibrary</a>
+</footer>
+
+
+</body>
 </html>
