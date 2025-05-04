@@ -4,49 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title> My personal Library</title>
-     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        header {
-            background-color: #f0f0f0;
-            padding: 1rem;
-            margin-bottom: 2rem;
-        }
-        nav a {
-            margin-right: 1rem;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 4px;
-        }
-        nav a:hover {
-            background-color: #0056b3;
-        }
+    <title>My personal Library</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      header {
+        background-color: #f0f0f0;
+        padding: 1rem;
+        margin-bottom: 2rem;
+      }
+      nav a {
+        margin-right: 1rem;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 4px;
+      }
+      nav a:hover {
+        background-color: #0056b3;
+      }
+      img.book-cover {
+        height: 150px;
+        float: left;
+        margin-right: 15px;
+        background-color: #e0e0e0; /* sichtbarer Hintergrund für weiße Icons */
+        border: 1px solid #ccc;
+        object-fit: contain;
+      }
     </style>
   </head>
   <body>
-  <header>
-    <h1>Library Book List</h1>
-    <nav>
+    <header>
+      <h1>Library Book List</h1>
+      <nav>
         <a href="{{ url_for('add_book') }}">📚 Add Book</a>
         <a href="{{ url_for('add_author') }}">✍️ Add Author</a>
-    </nav>
-</header>
+      </nav>
+    </header>
+
     {% if books %}
-        <ul>
+      <ul>
         {% for book in books %}
-            <li>
-                <strong>{{ book.title }}</strong> ({{ book.publication_year }})<br>
-                ISBN: {{ book.isbn }}<br>
-                Author: {{ book.author.name }}
-            </li>
+          <li style="margin-bottom: 2rem;">
+            <!-- initialer Platzhalter -->
+            <img
+              src="{{ url_for('static', filename='cover.png') }}"
+              data-isbn="{{ book.isbn }}"
+              alt="Cover for {{ book.title }}"
+              class="book-cover">
+            <div>
+              <strong>{{ book.title }}</strong> ({{ book.publication_year }})<br>
+              ISBN: {{ book.isbn }}<br>
+              Author: {{ book.author.name }}
+            </div>
+            <div style="clear: both;"></div>
+          </li>
         {% endfor %}
-        </ul>
+      </ul>
     {% else %}
-        <p>No books in the database yet.</p>
+      <p>No books in the database yet.</p>
     {% endif %}
-</body>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const placeholder = "{{ url_for('static', filename='cover.png') }}";
+
+        document.querySelectorAll("img[data-isbn]").forEach(img => {
+          const isbn    = img.dataset.isbn;
+          const testUrl = `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`;
+
+          // HEAD-Request für Content-Type und dann Preload
+          fetch(testUrl, { method: 'HEAD' }).then(response => {
+            const ct = response.headers.get("Content-Type") || "";
+            const useUrl = ct.includes("gif") ? placeholder : testUrl;
+
+            // Preload über Image-Objekt: placeholder bleibt sichtbar bis zum onload
+            const tester = new Image();
+            tester.onload = () => { img.src = useUrl; };
+            tester.onerror = () => { img.src = placeholder; };
+            tester.src = useUrl;
+          }).catch(() => {
+            img.src = placeholder;
+          });
+        });
+      });
+    </script>
+  </body>
 </html>
