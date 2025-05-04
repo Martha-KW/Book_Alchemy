@@ -2,6 +2,7 @@ from data_models import db, Author, Book
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_, func
 import os
 
 
@@ -19,15 +20,33 @@ print("SQLite-Pfad:", os.path.join(basedir, 'data', 'library.sqlite'))
 # route for the homepage
 @app.route('/')
 def home():
-    sort_by = request.args.get('sort_by', 'title')  # Default: sort by title
+    sort_by = request.args.get('sort_by')
+    search_term = request.args.get('search', '').strip()
 
-    if sort_by == 'author':
-        books = Book.query.join(Book.author).order_by(Author.name).all()
+    # Join Book & Author, um auch nach Autorname suchen zu können
+    query = Book.query.join(Author)
+
+    # Wenn ein Suchbegriff eingegeben wurde:
+    if search_term:
+        search_pattern = f"%{search_term.lower()}%"
+        query = query.filter(
+            or_(
+                func.lower(Book.title).like(search_pattern),
+                func.lower(Author.name).like(search_pattern),
+                func.cast(Book.publication_year, db.String).like(search_pattern),
+                Book.isbn.like(search_term)
+            )
+        )
+
+    # Sortierung anwenden
+    if sort_by == 'title':
+        query = query.order_by(Book.title)
+    elif sort_by == 'author':
+        query = query.order_by(Author.name)
     elif sort_by == 'publication_year':
-        books = Book.query.order_by(Book.publication_year).all()
-    else:
-        books = Book.query.order_by(Book.title).all()
+        query = query.order_by(Book.publication_year)
 
+    books = query.all()
     return render_template('home.html', books=books)
 
 
