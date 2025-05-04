@@ -19,7 +19,15 @@ print("SQLite-Pfad:", os.path.join(basedir, 'data', 'library.sqlite'))
 # route for the homepage
 @app.route('/')
 def home():
-    books = Book.query.all()  # get all books from database
+    sort_by = request.args.get('sort_by', 'title')  # Default: sort by title
+
+    if sort_by == 'author':
+        books = Book.query.join(Book.author).order_by(Author.name).all()
+    elif sort_by == 'publication_year':
+        books = Book.query.order_by(Book.publication_year).all()
+    else:
+        books = Book.query.order_by(Book.title).all()
+
     return render_template('home.html', books=books)
 
 
