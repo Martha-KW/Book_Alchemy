@@ -47,7 +47,10 @@ def home():
         query = query.order_by(Book.publication_year)
 
     books = query.all()
-    return render_template('home.html', books=books)
+    no_results = search_term and not books  # NEU: Info, wenn nichts gefunden wurde
+
+    return render_template('home.html', books=books, no_results=no_results)
+
 
 
 
