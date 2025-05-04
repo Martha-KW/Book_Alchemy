@@ -87,6 +87,17 @@ button:hover {
 }
 
 
+  a {
+    color: inherit;        /* inherits the standard text color no oldshool link blue */
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: #555;           /* slight color change on hoover */
+    text-decoration: underline;
+  }
+
+
 
 
     </style>
@@ -105,6 +116,8 @@ button:hover {
       <nav>
         <a href="{{ url_for('add_book') }}">📚 Add Book</a>
         <a href="{{ url_for('add_author') }}">✍️ Add Author</a>
+
+
       </nav>
 
       <form method="get" action="{{ url_for('home') }}" style="margin: 1rem 0;">
@@ -144,7 +157,9 @@ button:hover {
           <div class="book-info">
             <strong>{{ book.title }}</strong> ({{ book.publication_year }})<br>
             ISBN: {{ book.isbn }}<br>
-            Author: {{ book.author.name }}
+
+            Author: <a href="{{ url_for('author_detail', author_id=book.author.id) }}">{{ book.author.name }}</a>
+
             <div class="book-actions">
               <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST"
                     onsubmit="return confirm('Do you really want to delete the book?');">

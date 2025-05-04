@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ author.name }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .card {
+      background-color: #e0e0e0;
+      padding: 1.5rem;
+      border-radius: 10px;
+      max-width: 600px;
+    }
+    .button-link {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #444;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>{{ author.name }}</h2>
+    <p><strong>Born:</strong> {{ author.birth_date }}</p>
+    {% if author.date_of_death %}
+      <p><strong>Died:</strong> {{ author.date_of_death }}</p>
+    {% endif %}
+    <a href="{{ url_for('home') }}" class="button-link">⬅ Back to Library</a>
+  </div>
+</body>
+</html>

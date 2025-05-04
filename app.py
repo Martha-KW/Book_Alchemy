@@ -130,6 +130,13 @@ def delete_book(book_id):
     return redirect(url_for('home'))
 
 
+@app.route('/author/<int:author_id>')
+def author_detail(author_id):
+    author = Author.query.get_or_404(author_id)
+    return render_template('author_detail.html', author=author)
+
+
+
 # creates the tables, first time use only, reactivate if needed
 # with app.app_context():
 #     db.create_all()
