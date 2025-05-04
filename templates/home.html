@@ -4,13 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> My personal Library</title>
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #f0f0f0;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        nav a {
+            margin-right: 1rem;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: #0056b3;
+        }
+    </style>
   </head>
   <body>
-
-    {% for book in books %}
-    <div> <h3>{{ book.title }}</h3>
-    </div>
-    {% endfor %}
-
-  </body>
+  <header>
+    <h1>Library Book List</h1>
+    <nav>
+        <a href="{{ url_for('add_book') }}">📚 Add Book</a>
+        <a href="{{ url_for('add_author') }}">✍️ Add Author</a>
+    </nav>
+</header>
+    {% if books %}
+        <ul>
+        {% for book in books %}
+            <li>
+                <strong>{{ book.title }}</strong> ({{ book.publication_year }})<br>
+                ISBN: {{ book.isbn }}<br>
+                Author: {{ book.author.name }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No books in the database yet.</p>
+    {% endif %}
+</body>
 </html>

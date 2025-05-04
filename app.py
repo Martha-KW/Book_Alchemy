@@ -16,10 +16,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 print("SQLite-Pfad:", os.path.join(basedir, 'data', 'library.sqlite'))
 
-# Define the route for the homepage
+# route for the homepage
 @app.route('/')
 def home():
-    return "Welcome to the Home Page!"
+    books = Book.query.all()  # get all books from database
+    return render_template('home.html', books=books)
+
 
 
 @app.route('/add_author', methods=['GET', 'POST'])
