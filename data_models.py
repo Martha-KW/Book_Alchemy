@@ -5,10 +5,10 @@ db = SQLAlchemy()
 
 class Author(db.Model):
     """The author class is responsible for the author table with the columns id (
-    auto incremented), (author) name, birthdate and optional death date.
+    auto incremented), unique (author) name, birthdate and optional death date.
     """
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), unique=True, nullable=False)
     birth_date = db.Column(db.Date)
     date_of_death = db.Column(db.Date)
 

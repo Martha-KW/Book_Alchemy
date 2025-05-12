@@ -73,7 +73,14 @@ def add_author():
         birth_date_str = request.form.get('birth_date')
         date_of_death_str = request.form.get('date_of_death')
 
-        # convert the date strings to  datetime.date
+        # Check if author is already in the database
+        existing_author = Author.query.filter(
+            func.lower(Author.name) == func.lower(name)).first()
+        if existing_author:
+            message = f"Author '{name}' already exists in the database!"
+            return render_template('add_author.html', message=message)
+
+        # convert the date strings to datetime.date
         birth_date = (
             datetime.strptime(birth_date_str, '%Y-%m-%d').date()
             if birth_date_str else None
@@ -128,7 +135,12 @@ def add_book():
             message = f"Book '{title}' successfully added!"
         except Exception as e:
             db.session.rollback()
-            message = f"Error adding book: {e}"
+            if "UNIQUE constraint failed: book.isbn" in str(e):
+                message = f"Error: A book with ISBN '{isbn}' already exists in the database."
+            else:
+                message = f"Error adding book: Please check your input and try again."
+
+
 
     return render_template('add_book.html', authors=authors, message=message)
 
@@ -166,8 +178,8 @@ def author_detail(author_id):
 
 
 # creates the tables, first time use only, reactivate if you want to start a new library
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
 # helps with debugging if needed
 print("working directory:", os.getcwd())
